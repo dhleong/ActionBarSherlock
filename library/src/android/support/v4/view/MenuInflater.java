@@ -341,7 +341,7 @@ public final class MenuInflater extends android.view.MenuInflater {
 			//presumed emulation of 3.0+'s MenuInflator:
 			itemListenerMethodName = attrs.getAttributeValue(XML_NS, "onClick");
 			itemShowAsAction = attrs.getAttributeIntValue(XML_NS, "showAsAction", defaultItemShowAsAction);
-			itemActionLayout = attrs.getAttributeResourceValue(XML_NS, "actionLayout", 0);
+			itemActionLayout = attrs.getAttributeResourceValue(XML_NS, "actionLayout", View.NO_ID);
 			itemActionViewClassName = attrs.getAttributeValue(XML_NS, "actionViewClass");
 			
 			//a.recycle();
@@ -390,8 +390,9 @@ public final class MenuInflater extends android.view.MenuInflater {
 				//} catch (Exception e) {
 				//	throw new InflateException(e);
 				//}
-			} else if (itemActionLayout >= 0) {
-				//item.setActionView(itemActionLayout);
+//			} else if (itemActionLayout >= 0) {
+			} else if (itemActionLayout != View.NO_ID) {
+				item.setActionView(itemActionLayout);
 			}
 		}
 		

@@ -499,12 +499,19 @@ public final class MenuItemImpl implements MenuItem {
 
 	@Override
 	public MenuItem setActionView(int resId) {
-		mActionView = null;
-		mActionViewRes = resId;
-		
-		if (mActionViewRes != View.NO_ID) {
-			setActionViewOnViews(LayoutInflater.from(mMenu.getContext()).inflate(mActionViewRes, null, false));
-		}
+//		mActionView = null;
+//		mActionViewRes = resId;
+//		
+//		if (mActionViewRes != View.NO_ID) {
+//			setActionViewOnViews(LayoutInflater.from(mMenu.getContext()).inflate(mActionViewRes, null, false));
+//		}
+	    
+	    mActionView = null;
+	    mActionViewRes = resId;
+	    
+	    if (mActionViewRes != View.NO_ID){
+	        setActionView(LayoutInflater.from(mMenu.getContext()).inflate(mActionViewRes, null, false));
+	    }
 		
 		return this;
 	}
