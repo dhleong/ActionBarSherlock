@@ -11,13 +11,12 @@
 	<parent>
 		<groupId>com.actionbarsherlock</groupId>
 		<artifactId>parent</artifactId>
-		<version>3.0.2</version>
+		<version>3.2.3</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<modules>
-		<module>featuredemo</module>
-		<module>hcgallery</module>
+		<module>demos</module>
 		<module>shakespeare</module>
 		<module>styled</module>
 	</modules>

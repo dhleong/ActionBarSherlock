@@ -1,13 +1,13 @@
-ActionBarSherlock Shakespeare Sample Application
-================================================
+ActionBarSherlock Sample: Shakespeare
+=====================================
 
-A port of the `FragmentsLayout.java` file from the API demo application
-of the Android 3.0 SDK. Shows the use of fragments and their interaction
-with ActionBarSherlock.
-
-This application assumes that you have cloned the [android-actionbar][1]
-repository in the same folder as you cloned this repository.
+See [actionbarsherlock.com/samples.html][1] for information on the sample
+contained in this folder.
 
 
 
- [1]: https://github.com/johannilsson/android-actionbar
+
+
+
+
+ [1]: http://actionbarsherlock.com/samples.html

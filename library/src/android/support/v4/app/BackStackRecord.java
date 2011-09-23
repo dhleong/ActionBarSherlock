@@ -161,8 +161,8 @@ final class BackStackState implements Parcelable {
 final class BackStackRecord extends FragmentTransaction implements
         FragmentManager.BackStackEntry, Runnable {
     static final String TAG = "BackStackEntry";
-    
-	private static final boolean IS_HONEYCOMB = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
+
+    private static final boolean IS_HONEYCOMB = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
 
     final FragmentManagerImpl mManager;
 
@@ -172,6 +172,8 @@ final class BackStackRecord extends FragmentTransaction implements
     static final int OP_REMOVE = 3;
     static final int OP_HIDE = 4;
     static final int OP_SHOW = 5;
+    static final int OP_DETACH = 6;
+    static final int OP_ATTACH = 7;
 
     static final class Op {
         Op next;
@@ -252,7 +254,7 @@ final class BackStackRecord extends FragmentTransaction implements
                         } else {
                             writer.println("Removed:");
                             writer.print(innerPrefix); writer.print("  #"); writer.print(num);
-                                    writer.print(": "); 
+                                    writer.print(": ");
                         }
                         writer.println(op.removed.get(i));
                     }
@@ -337,12 +339,12 @@ final class BackStackRecord extends FragmentTransaction implements
         }
 
         if (containerViewId != 0) {
-        	//This will change the target container ID to be the content view
-        	//of our custom action bar implementation when the entire activity
-        	//view is selected as the target and we are pre-honeycomb
-        	if (!IS_HONEYCOMB && (containerViewId == android.R.id.content)) {
-        		containerViewId = R.id.actionbarsherlock_content;
-        	}
+            //This will change the target container ID to be the content view
+            //of our custom action bar implementation when the entire activity
+            //view is selected as the target and we are pre-honeycomb
+            if (!IS_HONEYCOMB && (containerViewId == android.R.id.content)) {
+                containerViewId = R.id.abs__content;
+            }
             if (fragment.mFragmentId != 0 && fragment.mFragmentId != containerViewId) {
                 throw new IllegalStateException("Can't change container ID of fragment "
                         + fragment + ": was " + fragment.mFragmentId
@@ -404,6 +406,32 @@ final class BackStackRecord extends FragmentTransaction implements
 
         Op op = new Op();
         op.cmd = OP_SHOW;
+        op.fragment = fragment;
+        addOp(op);
+
+        return this;
+    }
+
+    public FragmentTransaction detach(Fragment fragment) {
+        //if (fragment.mImmediateActivity == null) {
+        //    throw new IllegalStateException("Fragment not added: " + fragment);
+        //}
+
+        Op op = new Op();
+        op.cmd = OP_DETACH;
+        op.fragment = fragment;
+        addOp(op);
+
+        return this;
+    }
+
+    public FragmentTransaction attach(Fragment fragment) {
+        //if (fragment.mImmediateActivity == null) {
+        //    throw new IllegalStateException("Fragment not added: " + fragment);
+        //}
+
+        Op op = new Op();
+        op.cmd = OP_ATTACH;
         op.fragment = fragment;
         addOp(op);
 
@@ -503,7 +531,7 @@ final class BackStackRecord extends FragmentTransaction implements
     public int commitAllowingStateLoss() {
         return commitInternal(true);
     }
-    
+
     int commitInternal(boolean allowStateLoss) {
         if (mCommitted) throw new IllegalStateException("commit already called");
         if (FragmentManagerImpl.DEBUG) Log.v(TAG, "Commit: " + this);
@@ -516,7 +544,7 @@ final class BackStackRecord extends FragmentTransaction implements
         mManager.enqueueAction(this, allowStateLoss);
         return mIndex;
     }
-    
+
     public void run() {
         if (FragmentManagerImpl.DEBUG) Log.v(TAG, "Run: " + this);
 
@@ -576,6 +604,16 @@ final class BackStackRecord extends FragmentTransaction implements
                     f.mNextAnim = op.enterAnim;
                     mManager.showFragment(f, mTransition, mTransitionStyle);
                 } break;
+                case OP_DETACH: {
+                    Fragment f = op.fragment;
+                    f.mNextAnim = op.exitAnim;
+                    mManager.detachFragment(f, mTransition, mTransitionStyle);
+                } break;
+                case OP_ATTACH: {
+                    Fragment f = op.fragment;
+                    f.mNextAnim = op.enterAnim;
+                    mManager.attachFragment(f, mTransition, mTransitionStyle);
+                } break;
                 default: {
                     throw new IllegalArgumentException("Unknown cmd: " + op.cmd);
                 }
@@ -634,6 +672,16 @@ final class BackStackRecord extends FragmentTransaction implements
                 case OP_SHOW: {
                     Fragment f = op.fragment;
                     mManager.hideFragment(f,
+                            FragmentManagerImpl.reverseTransit(mTransition), mTransitionStyle);
+                } break;
+                case OP_DETACH: {
+                    Fragment f = op.fragment;
+                    mManager.attachFragment(f,
+                            FragmentManagerImpl.reverseTransit(mTransition), mTransitionStyle);
+                } break;
+                case OP_ATTACH: {
+                    Fragment f = op.fragment;
+                    mManager.detachFragment(f,
                             FragmentManagerImpl.reverseTransit(mTransition), mTransitionStyle);
                 } break;
                 default: {
