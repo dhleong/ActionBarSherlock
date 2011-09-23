@@ -525,7 +525,6 @@ public final class MenuItemImpl implements MenuItem {
 
     @Override
     public MenuItem setActionView(int resId) {
-        Log.d("minus", "setActionView: " + resId);
         mActionView = null;
         mActionViewRes = resId;
 
