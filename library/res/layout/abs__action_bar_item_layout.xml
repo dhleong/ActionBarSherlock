@@ -18,11 +18,11 @@
     android:layout_width="wrap_content"
     android:layout_height="fill_parent"
     android:addStatesFromChildren="true"
-    android:background="?selectableItemBackground"
     android:gravity="center"
     android:minWidth="40dip"
     android:focusable="true"
     android:clickable="true"
+    style="?actionButtonStyle"
     >
     <ImageView
         android:id="@+id/abs__item_icon"
